@@ -9,19 +9,21 @@
           =
         </div>
 
-        <input v-model="answer" max="100" class="border-2 border-neutral-600 w-[70px] rounded bg-white" type="number" name="answer">
-        <SvgIcon :path="mdiBackspaceOutline" :size="24" class="cursor-pointer" @click="answer = ''"/>
+        <div class="border-2 border-neutral-600 min-w-[70px] rounded bg-white">{{ answer || '&nbsp;' }}</div>
+        <SvgIcon v-if="!alreadyAnswered" :path="mdiBackspaceOutline" :size="24" class="cursor-pointer" @click="clearAnswer"/>
       </div>
 
-      <div v-if="alreadyAnswered">
-        <div v-if="isAnswerCorrect">
-          You are correct! 🎉
-        </div>
-        <div v-else>
-          You are wrong 😢
-          <br />
-          Correct answer is: <strong>{{ correctAnswer }}</strong>
-        </div>
+      <div v-if="alreadyAnswered" class="mt-6">
+        <template v-if="isAnswerCorrect">
+          <span class="text-5xl">🎉</span>
+        </template>
+        <template v-else>
+          <span class="text-5xl">😢</span>
+
+          <p class="mt-4 flex items-center gap-1">
+            Correct answer: <strong class="text-2xl">{{ correctAnswer }}</strong>
+          </p>
+        </template>
       </div>
     </div>
 
@@ -116,7 +118,15 @@ function answerQuestion() {
   emit('answer', isAnswerCorrect.value)
 }
 
+function clearAnswer() {
+  if (alreadyAnswered.value) return
+
+  answer.value = ''
+}
+
 function keyPadPressed(number: number) {
+  if (alreadyAnswered.value) return
+
   if (answer.value === '') {
     answer.value = number
   } else {
