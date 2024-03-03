@@ -5,9 +5,9 @@
       <button class="button mt-6" @click.stop="startQuiz">restart</button>
     </div>
 
-    <div v-else-if="!currentQuestion">
+    <div v-else-if="!currentQuestion" class="mt-12 flex flex-col items-center">
       <h2 class="text-2xl">Ready to start?</h2>
-      <button class="button mt-6" @click.stop="startQuiz">GO</button>
+      <button class="button mt-10" @click.stop="startQuiz">GO</button>
     </div>
 
     <div v-else>
