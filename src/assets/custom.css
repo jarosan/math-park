@@ -1,0 +1,11 @@
+@layer base {
+  body {
+    @apply bg-rose-50;
+  }
+}
+
+@layer components {
+  .button {
+    @apply bg-rose-700 p-2 rounded text-white disabled:bg-gray-400 disabled:text-neutral-900;
+  }
+}
