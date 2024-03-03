@@ -1,5 +1,5 @@
 <template>
-  <main class="container mx-auto max-w-xl">
+  <main class="px-4 container mx-auto max-w-xl">
     <h1 class="mt-6 text-5xl text-center">Math Park</h1>
     <QuizContainer />
   </main>
