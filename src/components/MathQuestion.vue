@@ -82,7 +82,7 @@ const operationSymbol = computed(() => {
     case 'substract':
       return '-'
     case 'multiply':
-      return '*'
+      return '•'
     case 'divide':
       return ':'
     default:
