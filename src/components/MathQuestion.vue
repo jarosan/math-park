@@ -43,7 +43,7 @@
         <button class="keypad_button" @click="keyPadPressed(8)">8</button>
         <button class="keypad_button" @click="keyPadPressed(9)">9</button>
       </div>
-      <div class="text-center">
+      <div class="flex justify-center">
         <button class="keypad_button" @click="keyPadPressed(0)">0</button>
       </div>
     </div>
