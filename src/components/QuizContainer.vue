@@ -2,12 +2,19 @@
   <div  class="mt-10">
     <div v-if="quizFinished">
       <h2>Quiz finished</h2>
-      <button class="button mt-6" @click.stop="startQuiz">restart</button>
+      <button class="button mt-6" @click.stop="questions = undefined">restart</button>
     </div>
 
     <div v-else-if="!currentQuestion" class="mt-12 flex flex-col items-center">
       <h2 class="text-2xl">Ready to start?</h2>
-      <button class="button mt-10" @click.stop="startQuiz">GO</button>
+
+      <div v-for="i in Array.from(new Array(8), (x, i) => i + 2)" :key="i" class="flex gap-6 mt-4">
+        <button class="button" @click.stop="startQuiz(i, false)">{{ i }}x</button>
+        <button class="button" @click.stop="startQuiz(i, true)">
+          {{ i }}x
+          <SvgIcon :path="mdiDice5Outline" :size="24" />
+        </button>
+      </div>
     </div>
 
     <div v-else>
@@ -36,6 +43,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { mdiDice5Outline } from '@mdi/js'
+import SvgIcon from '@/components/SvgIcon.vue'
 import MathQuestion, { type Question } from '@/components/MathQuestion.vue'
 
 type AnswereableQuestion = {
@@ -57,22 +66,32 @@ const currentQuestionAnswered = computed(() => {
 
 const quizFinished = computed(() => currentQuestionIndex.value && questions.value && questions.value.length <= currentQuestionIndex.value)
 
-function startQuiz() {
-  questions.value = [
-    { question: { left: 2, right: 0, operation: 'multiply' } },
-    { question: { left: 2, right: 1, operation: 'multiply' } },
-    { question: { left: 2, right: 2, operation: 'multiply' } },
-    { question: { left: 2, right: 3, operation: 'multiply' } },
-    { question: { left: 2, right: 4, operation: 'multiply' } },
-    { question: { left: 2, right: 5, operation: 'multiply' } },
-    { question: { left: 2, right: 6, operation: 'multiply' } },
-    { question: { left: 2, right: 7, operation: 'multiply' } },
-    { question: { left: 2, right: 8, operation: 'multiply' } },
-    { question: { left: 2, right: 9, operation: 'multiply' } },
-    { question: { left: 2, right: 10, operation: 'multiply' } },
-  ]
+function startQuiz(i: number, random: boolean) {
+  let possibleQuestions = [
+    { question: { left: i, right: 0, operation: 'multiply' } },
+    { question: { left: i, right: 1, operation: 'multiply' } },
+    { question: { left: i, right: 2, operation: 'multiply' } },
+    { question: { left: i, right: 3, operation: 'multiply' } },
+    { question: { left: i, right: 4, operation: 'multiply' } },
+    { question: { left: i, right: 5, operation: 'multiply' } },
+    { question: { left: i, right: 6, operation: 'multiply' } },
+    { question: { left: i, right: 7, operation: 'multiply' } },
+    { question: { left: i, right: 8, operation: 'multiply' } },
+    { question: { left: i, right: 9, operation: 'multiply' } },
+    { question: { left: i, right: 10, operation: 'multiply' } },
+  ] as AnswereableQuestion[]
 
+  if (random) shuffleArray(possibleQuestions)
+
+  questions.value = possibleQuestions
   currentQuestionIndex.value = 0
+}
+
+function shuffleArray(array: AnswereableQuestion[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
 function setQuestionAnswer(isCorrect: boolean) {
