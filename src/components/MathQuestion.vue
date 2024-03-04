@@ -9,7 +9,7 @@
           =
         </div>
 
-        <div class="border-2 border-neutral-600 min-w-[70px] rounded bg-white">{{ answer || '&nbsp;' }}</div>
+        <div class="border-2 border-neutral-600 min-w-[70px] rounded bg-white">{{ answer === '' ? '&nbsp;' : answer }}</div>
         <SvgIcon v-if="!alreadyAnswered" :path="mdiBackspaceOutline" :size="24" class="cursor-pointer" @click="clearAnswer"/>
       </div>
 
