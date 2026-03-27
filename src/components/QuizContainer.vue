@@ -1,26 +1,33 @@
 <template>
   <div  class="mt-10">
     <div v-if="quizFinished">
-      <h2>Quiz finished</h2>
-      <button class="button mt-6" @click.stop="questions = undefined">restart</button>
+      <h2>Quiz beendet</h2>
+      <p class="text-xl mt-4">{{ correctCount }} / {{ questions!.length }} richtig</p>
+      <button class="button mt-6" @click.stop="resetQuiz">neu starten</button>
     </div>
 
     <div v-else-if="!currentQuestion" class="mt-12 flex flex-col items-center">
-      <h2 class="text-2xl">Ready to start?</h2>
+      <h2 class="text-2xl">Bereit?</h2>
+
+      <div class="flex gap-4 mt-6">
+        <button class="button" :class="{ 'bg-emerald-600': mode === 'multiply' }" @click="mode = 'multiply'">Malnehmen</button>
+        <button class="button" :class="{ 'bg-emerald-600': mode === 'divide' }" @click="mode = 'divide'">Teilen</button>
+      </div>
 
       <div v-for="i in Array.from(new Array(8), (x, i) => i + 2)" :key="i" class="flex gap-6 mt-4">
-        <button class="button" @click.stop="startQuiz(i, false)">{{ i }}x</button>
+        <button class="button" @click.stop="startQuiz(i, false)">{{ i }}{{ mode === 'multiply' ? 'x' : ':' }}</button>
         <button class="button" @click.stop="startQuiz(i, true)">
-          {{ i }}x
+          {{ i }}{{ mode === 'multiply' ? 'x' : ':' }}
           <SvgIcon :path="mdiDice5Outline" :size="24" />
         </button>
       </div>
     </div>
 
     <div v-else>
+      <p class="text-sm text-neutral-500 mb-4">Aufgabe {{ currentQuestionIndex! + 1 }} von {{ questions!.length }}</p>
       <MathQuestion v-if="currentQuestion" :key="currentQuestionIndex" :question="currentQuestion.question" @answer="setQuestionAnswer"/>
 
-      <button v-if="currentQuestionAnswered" class="button bg-emerald-600" @click="proceedToNextQuestion">next</button>
+      <button v-if="currentQuestionAnswered" class="button bg-emerald-600" @click="proceedToNextQuestion">weiter</button>
     </div>
 
 
@@ -51,6 +58,7 @@ type AnswereableQuestion = {
   question: Question
   answeredCorrectly?: boolean
 }
+const mode = ref<'multiply' | 'divide'>('multiply')
 const questions = ref<AnswereableQuestion[]>()
 const currentQuestionIndex = ref<number>()
 
@@ -66,20 +74,25 @@ const currentQuestionAnswered = computed(() => {
 
 const quizFinished = computed(() => currentQuestionIndex.value && questions.value && questions.value.length <= currentQuestionIndex.value)
 
+const correctCount = computed(() => questions.value?.filter(q => q.answeredCorrectly).length ?? 0)
+
+function resetQuiz() {
+  questions.value = undefined
+  currentQuestionIndex.value = undefined
+}
+
 function startQuiz(i: number, random: boolean) {
-  let possibleQuestions = [
-    { question: { left: i, right: 0, operation: 'multiply' } },
-    { question: { left: i, right: 1, operation: 'multiply' } },
-    { question: { left: i, right: 2, operation: 'multiply' } },
-    { question: { left: i, right: 3, operation: 'multiply' } },
-    { question: { left: i, right: 4, operation: 'multiply' } },
-    { question: { left: i, right: 5, operation: 'multiply' } },
-    { question: { left: i, right: 6, operation: 'multiply' } },
-    { question: { left: i, right: 7, operation: 'multiply' } },
-    { question: { left: i, right: 8, operation: 'multiply' } },
-    { question: { left: i, right: 9, operation: 'multiply' } },
-    { question: { left: i, right: 10, operation: 'multiply' } },
-  ] as AnswereableQuestion[]
+  let possibleQuestions: AnswereableQuestion[]
+
+  if (mode.value === 'divide') {
+    possibleQuestions = Array.from({ length: 11 }, (_, j) => ({
+      question: { left: i * j, right: i, operation: 'divide' as const },
+    }))
+  } else {
+    possibleQuestions = Array.from({ length: 11 }, (_, j) => ({
+      question: { left: i, right: j, operation: 'multiply' as const },
+    }))
+  }
 
   if (random) shuffleArray(possibleQuestions)
 
@@ -95,8 +108,6 @@ function shuffleArray(array: AnswereableQuestion[]) {
 }
 
 function setQuestionAnswer(isCorrect: boolean) {
-  console.log('question is correct:', isCorrect)
-
   if (!questions.value || currentQuestionIndex.value === undefined) throw new Error('something went wrong')
 
   questions.value[currentQuestionIndex.value].answeredCorrectly = isCorrect

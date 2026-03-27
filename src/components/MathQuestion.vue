@@ -21,7 +21,7 @@
           <span class="text-5xl">😢</span>
 
           <p class="mt-4 flex items-center gap-1">
-            Correct answer: <strong class="text-2xl">{{ correctAnswer }}</strong>
+            Richtige Antwort: <strong class="text-2xl">{{ correctAnswer }}</strong>
           </p>
         </template>
       </div>
@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <button v-if="!alreadyAnswered" class="button" :disabled="answer === ''" @click.stop="answerQuestion">answer</button>
+  <button v-if="!alreadyAnswered" class="button" :disabled="answer === ''" @click.stop="answerQuestion">Antwort</button>
 </template>
 
 <script setup lang="ts">
@@ -129,7 +129,7 @@ function keyPadPressed(number: number) {
 
   if (answer.value === '') {
     answer.value = number
-  } else {
+  } else if (answer.value < 1000) {
     answer.value = answer.value * 10 + number
   }
 }

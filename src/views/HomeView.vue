@@ -2,7 +2,7 @@
   <main class="px-4 container mx-auto max-w-xl">
     <h1 class="mt-6 text-5xl text-center flex items-center justify-center">
       <SvgIcon :path="mdiCalculatorVariantOutline" :size="42" />
-      Math Park
+      Mathe Park
     </h1>
     <QuizContainer />
   </main>
